@@ -1,12 +1,210 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>나의 휴대폰</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>나의 휴대폰</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100dvh;
+      display: grid;
+      place-items: center;
+      padding: 16px;
+      background: #eceaf1;
+      font-family: Arial, sans-serif;
+    }
+
+    .phone {
+      width: min(360px, 100%);
+      height: min(740px, calc(100dvh - 32px));
+      min-height: 500px;
+      border: 9px solid #252525;
+      border-radius: 48px;
+      overflow: hidden;
+      position: relative;
+      background: linear-gradient(150deg, #e9d8ff, #b8d8ff, #ffe0e9);
+      box-shadow: 0 20px 50px #0003;
+    }
+
+    .camera {
+      width: 100px;
+      height: 26px;
+      margin: 10px auto;
+      border-radius: 20px;
+      background: #252525;
+    }
+
+    .clock {
+      margin-top: 32px;
+      text-align: center;
+      color: #30304c;
+    }
+
+    #time {
+      font-size: 64px;
+      font-weight: bold;
+    }
+
+    #date {
+      margin-top: 6px;
+      font-size: 15px;
+    }
+
+    .apps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px 10px;
+      padding: 40px 18px;
+    }
+
+    .app {
+      border: 0;
+      padding: 0;
+      background: transparent;
+      color: #30304c;
+      font: inherit;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .icon {
+      width: 56px;
+      height: 56px;
+      display: grid;
+      place-items: center;
+      margin: 0 auto 8px;
+      border-radius: 17px;
+      background: #ffffffb3;
+      font-size: 29px;
+      box-shadow: 0 4px 10px #0001;
+    }
+
+    .app:active .icon {
+      transform: scale(0.92);
+    }
+
+    .home-bar {
+      position: absolute;
+      bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 110px;
+      height: 5px;
+      border-radius: 10px;
+      background: #30304c;
+    }
+
+    dialog {
+      width: min(280px, 85vw);
+      padding: 24px;
+      border: 0;
+      border-radius: 22px;
+      text-align: center;
+      color: #30304c;
+    }
+
+    dialog::backdrop {
+      background: #0005;
+    }
+
+    .close {
+      margin-top: 12px;
+      padding: 10px 24px;
+      border: 0;
+      border-radius: 12px;
+      background: #e9d8ff;
+      cursor: pointer;
+    }
+  </style>
 </head>
+
 <body>
-    <h1>나의 휴대폰 웹사이트</h1>
-    <p>휴대폰 웹사이트 만들기 시작!</p>
+  <main class="phone">
+    <div class="camera"></div>
+
+    <div class="clock">
+      <div id="time"></div>
+      <div id="date"></div>
+    </div>
+
+    <div class="apps">
+      <button class="app" onclick="openApp('사진')">
+        <span class="icon">🌷</span>사진
+      </button>
+
+      <button class="app" onclick="openApp('메시지')">
+        <span class="icon">💬</span>메시지
+      </button>
+
+      <button class="app" onclick="openApp('음악')">
+        <span class="icon">🎵</span>음악
+      </button>
+
+      <button class="app" onclick="openApp('메모')">
+        <span class="icon">📝</span>메모
+      </button>
+
+      <button class="app" onclick="openApp('달력')">
+        <span class="icon">📅</span>달력
+      </button>
+
+      <button class="app" onclick="openApp('전화')">
+        <span class="icon">📞</span>전화
+      </button>
+
+      <button class="app" onclick="openApp('날씨')">
+        <span class="icon">☀️</span>날씨
+      </button>
+
+      <button class="app" onclick="openApp('설정')">
+        <span class="icon">⚙️</span>설정
+      </button>
+    </div>
+
+    <div class="home-bar"></div>
+  </main>
+
+  <dialog id="app-window" aria-labelledby="app-title">
+    <h2 id="app-title"></h2>
+    <p>여기에 앱 내용을 추가할 거야!</p>
+    <button class="close"
+      onclick="document.getElementById('app-window').close()">
+      닫기
+    </button>
+  </dialog>
+
+  <script>
+    function updateClock() {
+      const now = new Date();
+
+      document.getElementById("time").textContent =
+        now.toLocaleTimeString("ko-KR", {
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: false
+        });
+
+      document.getElementById("date").textContent =
+        now.toLocaleDateString("ko-KR", {
+          month: "long",
+          day: "numeric",
+          weekday: "long"
+        });
+    }
+
+    function openApp(name) {
+      document.getElementById("app-title").textContent = name;
+      document.getElementById("app-window").showModal();
+    }
+
+    updateClock();
+    setInterval(updateClock, 1000);
+  </script>
 </body>
 </html>
