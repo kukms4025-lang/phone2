@@ -6,7 +6,100 @@
 <title>나의 iPhone</title>
 
 <style>
-* { box-sizing: border-box; }
+/* 아이폰 화면 비율 유지 + 브라우저 안에 전체 표시 */
+.phone {
+  width: min(100vw, 46.12676dvh);
+  height: auto;
+  aspect-ratio: 393 / 852;
+  border-radius: min(5dvh, 10vw);
+}
+
+/* 아이폰 화면 높이에 맞춘 암호 입력 위치 */
+.passcode-content {
+  top: 0;
+  height: 100%;
+}
+
+.passcode-title {
+  position: absolute;
+  top: 21%;
+  left: 0;
+  width: 100%;
+  margin: 0;
+  font-size: 5cqw;
+  line-height: 1.2;
+  font-weight: 600;
+}
+
+.dots {
+  position: absolute;
+  top: 28%;
+  left: 0;
+  width: 100%;
+  margin: 0;
+  gap: 4.6cqw;
+}
+
+.dot {
+  width: 3.5cqw;
+  height: 3.5cqw;
+}
+
+.passcode-feedback {
+  position: absolute;
+  top: 32%;
+  left: 8%;
+  width: 84%;
+  margin: 0;
+  font-size: 3cqw;
+}
+
+/* 三列のボタンを画面中央に配置 */
+.keypad {
+  position: absolute;
+  top: 37%;
+  left: 0;
+  width: 100%;
+  margin: 0;
+  grid-template-columns: repeat(3, 19.5cqw);
+  column-gap: 7cqw;
+  row-gap: 4.5cqw;
+}
+
+.key {
+  width: 19.5cqw;
+  height: 19.5cqw;
+}
+
+.number {
+  top: 3cqw;
+  font-size: 9.7cqw;
+}
+
+.letters {
+  top: 13.2cqw;
+  font-size: 2.4cqw;
+}
+
+.key.zero .number {
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* 키패드 아래에 긴급 상황 / 취소 */
+.passcode-actions {
+  position: absolute;
+  top: 84%;
+  left: 13%;
+  width: 74%;
+  margin: 0;
+}
+
+.text-button {
+  padding: 2cqw;
+  font-size: 3.8cqw;
+}
+  * { box-sizing: border-box; }
 
 html, body {
   margin: 0;
