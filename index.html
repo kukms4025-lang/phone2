@@ -6,21 +6,7 @@
 <title>나의 iPhone</title>
 
 <style>
-/* 위로 밀 때 잠금 화면이 앞에서 움직임 */
-.lock-screen {
-  z-index: 2;
-  will-change: transform, opacity;
-}
-
-.passcode-screen {
-  z-index: 1;
-  will-change: transform, opacity;
-}
-
-.home-screen {
-  z-index: 3;
-}
-  * { box-sizing: border-box; }
+* { box-sizing: border-box; }
 
 html, body {
   margin: 0;
@@ -34,7 +20,7 @@ body {
   height: 100dvh;
   overflow: hidden;
   background: #0d0e10;
-  color: #fff;
+  color: white;
   font-family: -apple-system, BlinkMacSystemFont,
     "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -56,7 +42,6 @@ button:focus-visible {
 
 .phone {
   position: relative;
-  /* 보내준 사진의 화면 비율 */
   width: min(100vw, 58.24176dvh);
   aspect-ratio: 530 / 910;
   overflow: hidden;
@@ -82,6 +67,7 @@ button:focus-visible {
 
 svg { display: block; }
 
+/* 상태 표시줄 */
 .status {
   position: absolute;
   z-index: 10;
@@ -109,7 +95,7 @@ svg { display: block; }
   width: 33%;
   height: 4.6%;
   border-radius: 10cqw;
-  background: #000;
+  background: black;
   pointer-events: none;
 }
 
@@ -128,11 +114,13 @@ svg { display: block; }
   inset: 0;
 }
 
-/* 잠금 화면 */
+/* 앞에서 움직이는 잠금 화면 */
 .lock-screen {
+  z-index: 2;
   touch-action: none;
   user-select: none;
   -webkit-user-select: none;
+  will-change: transform, opacity;
 }
 
 .clock {
@@ -217,11 +205,13 @@ svg { display: block; }
   color: #ffffffbf;
 }
 
-/* 반투명 암호 화면 */
+/* 뒤에 고정된 비밀번호 화면 */
 .passcode-screen {
+  z-index: 1;
   background: rgba(10, 12, 14, .38);
   backdrop-filter: blur(30px);
   -webkit-backdrop-filter: blur(30px);
+  will-change: opacity;
 }
 
 .passcode-title {
@@ -267,7 +257,6 @@ svg { display: block; }
   font-size: 2.8cqw;
 }
 
-/* 사진과 동일한 버튼 위치와 간격 */
 .keypad {
   position: absolute;
   top: 31.75%;
@@ -362,7 +351,8 @@ svg { display: block; }
 
 .shake { animation: shake .35s; }
 
-/* 홈 화면 */
+.home-screen { z-index: 3; }
+
 .home-title {
   position: absolute;
   top: 20%;
@@ -386,6 +376,10 @@ svg { display: block; }
   -webkit-backdrop-filter: blur(15px);
   font-size: 4cqw;
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .shake { animation: none; }
+}
 </style>
 </head>
 
@@ -393,7 +387,6 @@ svg { display: block; }
 <main class="phone">
   <div class="wallpaper"></div>
   <div class="shade"></div>
-
   <div class="island" aria-hidden="true"></div>
 
   <header class="status">
@@ -468,7 +461,7 @@ svg { display: block; }
   </section>
 
   <section id="passcode-screen" class="screen passcode-screen"
-           aria-labelledby="passcode-title" hidden>
+           aria-labelledby="passcode-title" hidden inert>
     <h1 id="passcode-title" class="passcode-title" tabindex="-1">
       암호 입력
     </h1>
@@ -481,7 +474,6 @@ svg { display: block; }
     </div>
 
     <p id="feedback" class="feedback" role="status"></p>
-
     <div id="keypad" class="keypad" aria-label="암호 키패드"></div>
 
     <div class="passcode-actions">
@@ -494,7 +486,7 @@ svg { display: block; }
     </div>
   </section>
 
-  <section id="home-screen" class="screen" hidden>
+  <section id="home-screen" class="screen home-screen" hidden inert>
     <h1 id="home-title" class="home-title" tabindex="-1">홈 화면</h1>
     <button id="lock-again" class="lock-again" type="button">
       다시 잠그기
@@ -517,13 +509,21 @@ let screen = "lock";
 let code = "";
 let checking = false;
 let timer;
+
 let gesture = null;
+let animating = false;
+let dragging = false;
+let lastY = 0;
+let lastTime = 0;
+let velocity = 0;
+let suppressClickUntil = 0;
 
 const letters = {
   1: "", 2: "ABC", 3: "DEF", 4: "GHI", 5: "JKL",
   6: "MNO", 7: "PQRS", 8: "TUV", 9: "WXYZ", 0: ""
 };
 
+/* 숫자 키패드 */
 for (const digit of ["1","2","3","4","5","6","7","8","9","0"]) {
   const button = document.createElement("button");
   button.type = "button";
@@ -577,16 +577,15 @@ function resetCode() {
 
 function showScreen(name) {
   screen = name;
-  lockScreen.hidden = name !== "lock";
-  passcodeScreen.hidden = name !== "passcode";
-  homeScreen.hidden = name !== "home";
-}
 
-function openPasscode() {
-  if (screen !== "lock") return;
-  resetCode();
-  showScreen("passcode");
-  document.getElementById("passcode-title").focus();
+  [
+    [lockScreen, "lock"],
+    [passcodeScreen, "passcode"],
+    [homeScreen, "home"]
+  ].forEach(([element, state]) => {
+    element.hidden = name !== state;
+    element.inert = name !== state;
+  });
 }
 
 function enterDigit(digit) {
@@ -638,21 +637,16 @@ document.getElementById("lock-again").addEventListener("click", () => {
   document.getElementById("unlock-hint").focus();
 });
 
-/* 손을 따라 움직이는 잠금 해제 애니메이션 */
-let animating = false;
-let lastY = 0;
-let lastTime = 0;
-let velocity = 0;
-let dragging = false;
-
+/* 비밀번호 화면은 처음부터 제자리에 고정 */
 function prepareSwipe() {
+  resetCode();
   passcodeScreen.hidden = false;
   passcodeScreen.inert = true;
   passcodeScreen.style.opacity = "0";
-  passcodeScreen.style.transform = "translateY(35px)";
   passcodeScreen.style.pointerEvents = "none";
 }
 
+/* 잠금 화면만 위로 이동 */
 function paintSwipe(distance) {
   const height = lockScreen.clientHeight;
   const progress = Math.min(distance / (height * .5), 1);
@@ -660,24 +654,23 @@ function paintSwipe(distance) {
   lockScreen.style.transform = `translateY(${-distance}px)`;
   lockScreen.style.opacity = String(1 - progress);
 
+  /* 암호 화면에는 이동 효과를 적용하지 않음 */
   passcodeScreen.style.opacity = String(progress);
-  passcodeScreen.style.transform =
-    `translateY(${35 * (1 - progress)}px)`;
 }
 
 function clearSwipeStyles() {
-  [lockScreen, passcodeScreen].forEach(element => {
-    element.style.transition = "";
-    element.style.transform = "";
-    element.style.opacity = "";
-    element.style.pointerEvents = "";
-  });
+  lockScreen.style.transition = "";
+  lockScreen.style.transform = "";
+  lockScreen.style.opacity = "";
 
-  passcodeScreen.inert = false;
+  passcodeScreen.style.transition = "";
+  passcodeScreen.style.opacity = "";
+  passcodeScreen.style.pointerEvents = "";
 }
 
 function finishSwipe(open) {
   if (animating) return;
+
   animating = true;
   gesture = null;
 
@@ -686,42 +679,32 @@ function finishSwipe(open) {
   ).matches;
 
   const duration = reduceMotion ? 0 : 360;
-  const transition =
-    `${duration}ms cubic-bezier(.22, 1, .36, 1)`;
+  const easing = "cubic-bezier(.22, 1, .36, 1)";
 
   lockScreen.style.transition =
-    `transform ${transition}, opacity ${transition}`;
+    `transform ${duration}ms ${easing}, opacity ${duration}ms ${easing}`;
 
+  /* 비밀번호 화면은 투명도만 변경 */
   passcodeScreen.style.transition =
-    `transform ${transition}, opacity ${transition}`;
+    `opacity ${duration}ms ${easing}`;
 
-  /* 현재 드래그 위치를 확정한 뒤 마지막 위치로 이동 */
   void lockScreen.offsetHeight;
 
   if (open) {
     lockScreen.style.transform =
       `translateY(${-lockScreen.clientHeight * .65}px)`;
     lockScreen.style.opacity = "0";
-
-    passcodeScreen.style.transform = "translateY(0)";
     passcodeScreen.style.opacity = "1";
   } else {
     lockScreen.style.transform = "translateY(0)";
     lockScreen.style.opacity = "1";
-
-    passcodeScreen.style.transform = "translateY(35px)";
     passcodeScreen.style.opacity = "0";
   }
 
   setTimeout(() => {
-    if (open) {
-      resetCode();
-      showScreen("passcode");
-    } else {
-      showScreen("lock");
-    }
-
+    showScreen(open ? "passcode" : "lock");
     clearSwipeStyles();
+
     animating = false;
     dragging = false;
 
@@ -731,6 +714,7 @@ function finishSwipe(open) {
   }, duration);
 }
 
+/* 터치·마우스 드래그 */
 lockScreen.addEventListener("pointerdown", event => {
   if (screen !== "lock" || animating) return;
   if (!event.isPrimary || event.button !== 0) return;
@@ -746,7 +730,10 @@ lockScreen.addEventListener("pointerdown", event => {
   velocity = 0;
   dragging = false;
 
-  lockScreen.setPointerCapture(event.pointerId);
+  /* 안내 버튼의 일반 클릭도 유지 */
+  if (!event.target.closest("button")) {
+    lockScreen.setPointerCapture(event.pointerId);
+  }
 });
 
 lockScreen.addEventListener("pointermove", event => {
@@ -759,10 +746,12 @@ lockScreen.addEventListener("pointermove", event => {
     if (up < 5 || up < sideways) return;
 
     dragging = true;
+    lockScreen.setPointerCapture(event.pointerId);
     prepareSwipe();
   }
 
   const now = performance.now();
+
   velocity = (lastY - event.clientY) /
     Math.max(now - lastTime, 1);
 
@@ -779,12 +768,11 @@ lockScreen.addEventListener("pointerup", event => {
   const moved = dragging;
   gesture = null;
 
-  if (!moved) {
-    dragging = false;
-    return;
-  }
+  if (!moved) return;
 
-  /* 오래 멈췄다가 놓으면 이전 속도를 사용하지 않음 */
+  /* 드래그 뒤 발생하는 클릭으로 다시 열리는 현상 방지 */
+  suppressClickUntil = performance.now() + 500;
+
   if (performance.now() - lastTime > 100) {
     velocity = 0;
   }
@@ -795,28 +783,26 @@ lockScreen.addEventListener("pointerup", event => {
   finishSwipe(enoughDistance || quickSwipe);
 });
 
-lockScreen.addEventListener("pointercancel", () => {
-  if (dragging && !animating) {
-    finishSwipe(false);
-  }
-  gesture = null;
-});
-
-lockScreen.addEventListener("lostpointercapture", () => {
+function cancelSwipe() {
   if (gesture && dragging && !animating) {
     finishSwipe(false);
   }
   gesture = null;
-});
+}
 
-/* 안내 문구를 눌러도 같은 모션으로 열기 */
+lockScreen.addEventListener("pointercancel", cancelSwipe);
+lockScreen.addEventListener("lostpointercapture", cancelSwipe);
+
+/* 키보드로도 접근 가능한 안내 버튼 */
 document.getElementById("unlock-hint")
   .addEventListener("click", () => {
+    if (performance.now() < suppressClickUntil) return;
     if (screen !== "lock" || animating || dragging) return;
 
     prepareSwipe();
     finishSwipe(true);
   });
+
 updateClock();
 updateInput();
 setInterval(updateClock, 1000);
