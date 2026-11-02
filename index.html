@@ -10,35 +10,43 @@
   box-sizing: border-box;
 }
 
+html,
 body {
   margin: 0;
-  min-height: 100dvh;
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  height: 100dvh;
   display: grid;
   place-items: center;
+  overflow: hidden;
   background: #0d0e10;
   color: white;
-  font-family: -apple-system, BlinkMacSystemFont,
-               "Helvetica Neue", Arial, sans-serif;
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "SF Pro Display",
+    "Helvetica Neue",
+    Arial,
+    sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
-button {
-  font: inherit;
-  color: inherit;
-  cursor: pointer;
-}
-
+/* 브라우저 높이에 맞춰지는 아이폰 화면 */
 .phone {
   position: relative;
-  width: min(100vw, 390px, 58.735dvh);
-  aspect-ratio: 390 / 664;
+  height: min(100dvh, 216.7939vw);
+  aspect-ratio: 393 / 852;
   overflow: hidden;
-  border-radius: 22px;
-  background: #292c32;
   isolation: isolate;
   container-type: inline-size;
+  border-radius: min(5dvh, 10vw);
+  background: #25262a;
 }
 
+/* 배경 사진 */
 .wallpaper {
   position: absolute;
   inset: 0;
@@ -51,34 +59,46 @@ button {
   inset: 0;
   z-index: -1;
   background: linear-gradient(
-    to bottom,
-    #0003,
-    transparent 40%,
-    #0002 65%,
-    #0005
+    180deg,
+    rgba(0, 0, 0, .24),
+    transparent 38%,
+    rgba(0, 0, 0, .08) 65%,
+    rgba(0, 0, 0, .3)
   );
 }
 
-/* 上단 상태 표시 */
+svg {
+  display: block;
+}
+
+/* 상태 표시줄 */
 .status {
-  height: 12cqw;
-  padding: 4.1cqw 6.2cqw 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 15cqw;
+  padding: 5.2cqw 7cqw 0;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  font-size: 3.6cqw;
-  font-weight: 600;
-  letter-spacing: -0.15cqw;
+}
+
+.small-time {
+  font-size: 4.1cqw;
+  line-height: 1;
+  font-weight: 700;
+  letter-spacing: -.15cqw;
 }
 
 .island {
   position: absolute;
-  top: 2.6cqw;
+  top: 2.8cqw;
   left: 50%;
   transform: translateX(-50%);
-  width: 33cqw;
-  height: 7.9cqw;
-  border-radius: 8cqw;
+  width: 31.8cqw;
+  height: 9.4cqw;
+  border-radius: 6cqw;
   background: black;
 }
 
@@ -86,97 +106,137 @@ button {
   display: flex;
   align-items: center;
   gap: 1.5cqw;
-  padding-top: 0.3cqw;
+}
+
+.signal {
+  width: 4.6cqw;
+  height: 3.4cqw;
+}
+
+.wifi {
+  width: 4.5cqw;
+  height: 3.5cqw;
+}
+
+.battery {
+  width: 6.5cqw;
+  height: 3.4cqw;
 }
 
 /* 날짜와 시계 */
 .clock {
-  padding-top: 9.8cqw;
+  position: absolute;
+  top: 27cqw;
+  left: 0;
+  width: 100%;
   text-align: center;
 }
 
-#date {
-  font-size: 5.2cqw;
+.date {
+  font-size: 5.5cqw;
   line-height: 1.2;
-  font-weight: 600;
-  letter-spacing: -0.2cqw;
+  font-weight: 700;
+  letter-spacing: -.2cqw;
 }
 
-#time {
-  margin-top: 0.5cqw;
-  padding-right: 1.2cqw;
-  font-size: 28cqw;
-  line-height: 0.98;
-  font-weight: 600;
-  letter-spacing: -1.7cqw;
+.time {
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
+  margin-top: 1.2cqw;
+
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "SF Pro Display",
+    "Helvetica Neue",
+    Arial,
+    sans-serif;
+
+  font-size: 30cqw;
+  line-height: 1;
+  font-weight: 700;
   font-variant-numeric: tabular-nums;
+  letter-spacing: -1.8cqw;
+  white-space: nowrap;
+}
+
+.time .colon {
+  display: inline-block;
+  margin: 0 .2cqw 0 -.2cqw;
+  transform: translateY(-.6cqw);
+}
+
+/* 시계가 네 자리일 때 폭 조절 */
+.time.long-time {
+  font-size: 28cqw;
 }
 
 .language {
   display: inline-flex;
   align-items: center;
-  gap: 1.5cqw;
-  margin-top: 5.6cqw;
-  padding: 1.3cqw 3cqw;
-  border-radius: 7cqw;
-  background: rgba(65, 63, 61, 0.88);
+  justify-content: center;
+  gap: 1.6cqw;
+  margin-top: 5cqw;
+  padding: 1.6cqw 3.4cqw;
+  border-radius: 8cqw;
+  background: rgba(58, 57, 55, .85);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  font-size: 3.5cqw;
+  font-size: 3.7cqw;
   font-weight: 600;
-  line-height: 1.4;
 }
 
 .language svg {
-  width: 4cqw;
-  height: 4cqw;
+  width: 4.3cqw;
+  height: 4.3cqw;
 }
 
 /* 알림 */
 .notifications {
   position: absolute;
-  bottom: 31cqw;
-  left: 2.6cqw;
-  right: 2.6cqw;
+  bottom: 38cqw;
+  left: 2.5cqw;
+  right: 2.5cqw;
   display: grid;
-  gap: 1.5cqw;
+  gap: 1.6cqw;
 }
 
 .notification {
+  min-height: 17cqw;
   display: flex;
   align-items: center;
-  min-height: 16.6cqw;
-  padding: 3.3cqw 3.6cqw;
-  gap: 3.3cqw;
-  border-radius: 8.5cqw;
-  background: rgba(65, 64, 73, 0.78);
+  gap: 3.2cqw;
+  padding: 3.2cqw 3.7cqw;
+  border-radius: 8cqw;
+  background: rgba(65, 64, 73, .76);
   backdrop-filter: blur(28px);
   -webkit-backdrop-filter: blur(28px);
-  box-shadow: inset 0 1px 0 #ffffff12;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .08);
 }
 
-.message-icon,
-.calendar-icon {
+.app-icon {
   flex-shrink: 0;
-  width: 10cqw;
-  height: 10cqw;
-  border-radius: 2.5cqw;
+  width: 10.2cqw;
+  height: 10.2cqw;
   display: grid;
   place-items: center;
+  overflow: hidden;
+  border-radius: 2.6cqw;
 }
 
 .message-icon {
-  background: #28c653;
+  background: #2acb54;
 }
 
 .message-icon svg {
-  width: 7.2cqw;
-  height: 7.2cqw;
+  width: 7cqw;
+  height: 7cqw;
 }
 
 .calendar-icon {
-  background: #fff;
-  color: #222;
+  background: white;
+  color: #333;
   font-size: 6cqw;
 }
 
@@ -193,81 +253,78 @@ button {
 }
 
 .heading strong {
-  font-size: 3.7cqw;
-  letter-spacing: -0.15cqw;
+  font-size: 3.8cqw;
+  font-weight: 700;
+  letter-spacing: -.12cqw;
 }
 
 .heading span {
   flex-shrink: 0;
-  color: #b9b9bf;
   font-size: 3cqw;
+  color: #bdbcc3;
 }
 
 .content p {
-  margin: 0.5cqw 0 0;
-  font-size: 3.5cqw;
-  letter-spacing: -0.1cqw;
+  margin: .4cqw 0 0;
+  font-size: 3.6cqw;
+  line-height: 1.25;
+  letter-spacing: -.1cqw;
 }
 
-/* 아래 버튼 */
+/* 하단 버튼 */
 .controls {
   position: absolute;
-  bottom: 10.6cqw;
+  bottom: 12cqw;
   left: 12cqw;
   right: 12cqw;
   display: flex;
   justify-content: space-between;
-  align-items: center;
 }
 
 .round-button {
   width: 13cqw;
   height: 13cqw;
+  display: grid;
+  place-items: center;
   padding: 0;
   border: 0;
   border-radius: 50%;
-  background: rgba(43, 43, 43, 0.88);
-  backdrop-filter: blur(15px);
-  -webkit-backdrop-filter: blur(15px);
-  display: grid;
-  place-items: center;
+  color: white;
+  background: rgba(43, 43, 43, .8);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
 }
 
 .round-button svg {
-  width: 5.3cqw;
-  height: 5.3cqw;
-}
-
-.hint {
-  position: absolute;
-  bottom: 11.2cqw;
-  left: 50%;
-  transform: translateX(-50%);
-  white-space: nowrap;
-  font-size: 3.3cqw;
-  font-weight: 500;
-  color: rgba(255, 255, 255, 0.6);
-  pointer-events: none;
-}
-
-.home-bar {
-  position: absolute;
-  bottom: 1cqw;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 34cqw;
-  height: 1cqw;
-  border-radius: 5px;
-  background: white;
-}
-
-svg {
-  display: block;
+  width: 5.5cqw;
+  height: 5.5cqw;
   fill: none;
   stroke: currentColor;
   stroke-width: 1.8;
   stroke-linecap: round;
   stroke-linejoin: round;
+}
+
+.hint {
+  position: absolute;
+  bottom: 8cqw;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  font-size: 3.3cqw;
+  font-weight: 500;
+  color: rgba(255, 255, 255, .68);
+}
+
+.home-bar {
+  position: absolute;
+  bottom: 2.2cqw;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 34cqw;
+  height: 1.2cqw;
+  border-radius: 2cqw;
+  background: white;
 }
 </style>
 </head>
@@ -278,51 +335,61 @@ svg {
   <div class="shade"></div>
 
   <header class="status">
-    <span id="small-time"></span>
+    <span id="small-time" class="small-time"></span>
     <div class="island" aria-hidden="true"></div>
 
     <div class="indicators">
-      <!-- 통신 신호 -->
-      <svg viewBox="0 0 20 16"
-           role="img" aria-label="통신 신호"
-           style="width:4.4cqw;height:3.2cqw;fill:white;stroke:none">
-        <rect x="0" y="11" width="3" height="5" rx=".7"/>
-        <rect x="5" y="8" width="3" height="8" rx=".7"/>
-        <rect x="10" y="4" width="3" height="12" rx=".7"/>
-        <rect x="15" y="0" width="3" height="16" rx=".7"/>
+      <!-- 통신 신호: 막대 4개 -->
+      <svg class="signal" viewBox="0 0 20 16"
+           role="img" aria-label="통신 신호">
+        <g fill="white">
+          <rect x="0" y="11" width="3.2" height="5" rx=".7"/>
+          <rect x="5.2" y="8" width="3.2" height="8" rx=".7"/>
+          <rect x="10.4" y="4" width="3.2" height="12" rx=".7"/>
+          <rect x="15.6" y="0" width="3.2" height="16" rx=".7"/>
+        </g>
       </svg>
 
-      <!-- 와이파이 -->
-      <svg viewBox="0 0 24 18"
-           role="img" aria-label="와이파이"
-           style="width:4cqw;height:3.2cqw;stroke:white;stroke-width:2.6">
-        <path d="M2 5.5 Q12 -2 22 5.5"/>
-        <path d="M5.5 9.5 Q12 4.5 18.5 9.5"/>
-        <path d="M9 13 Q12 10.5 15 13"/>
-        <circle cx="12" cy="16" r="1.4"
-                fill="white" stroke="none"/>
+      <!-- 와이파이: 곡선 3개와 점 1개 -->
+      <svg class="wifi" viewBox="0 0 24 20"
+           role="img" aria-label="와이파이">
+        <g fill="none" stroke="white" stroke-width="2.3"
+           stroke-linecap="round">
+          <path d="M2 5.3 C7.5 .9 16.5 .9 22 5.3"/>
+          <path d="M5.4 9.1 C9.1 6.1 14.9 6.1 18.6 9.1"/>
+          <path d="M8.9 12.9 C10.7 11.5 13.3 11.5 15.1 12.9"/>
+        </g>
+        <circle cx="12" cy="17" r="1.6" fill="white"/>
       </svg>
 
       <!-- 배터리 -->
-      <svg viewBox="0 0 30 15"
-           role="img" aria-label="배터리"
-           style="width:6cqw;height:3.1cqw;stroke:none">
+      <svg class="battery" viewBox="0 0 30 15"
+           role="img" aria-label="배터리">
         <rect x=".7" y=".7" width="25" height="13"
-              rx="3.3" fill="none"
-              stroke="#ffffffb3" stroke-width="1.2"/>
-        <rect x="2.8" y="2.8" width="20.8" height="8.8"
-              rx="1.5" fill="white"/>
-        <path d="M27 5v5c2 0 2-5 0-5Z" fill="#ffffffb3"/>
+              rx="3.5" fill="none"
+              stroke="white" stroke-opacity=".6"
+              stroke-width="1.2"/>
+        <rect x="2.7" y="2.7" width="21" height="9"
+              rx="1.6" fill="white"/>
+        <path d="M27 5v5c2.4 0 2.4-5 0-5Z"
+              fill="white" fill-opacity=".65"/>
       </svg>
     </div>
   </header>
 
   <section class="clock" aria-label="날짜와 시간">
-    <div id="date"></div>
-    <div id="time"></div>
+    <div id="date" class="date"></div>
+
+    <div id="time" class="time">
+      <span id="hours"></span>
+      <span class="colon">:</span>
+      <span id="minutes"></span>
+    </div>
 
     <div class="language">
-      <svg viewBox="0 0 24 24" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none"
+           stroke="white" stroke-width="1.5"
+           aria-hidden="true">
         <circle cx="12" cy="12" r="9"/>
         <ellipse cx="12" cy="12" rx="4" ry="9"/>
         <path d="M3 12h18 M5 6.5h14 M5 17.5h14"/>
@@ -333,11 +400,10 @@ svg {
 
   <section class="notifications" aria-label="알림">
     <article class="notification">
-      <div class="message-icon">
-        <svg viewBox="0 0 24 24"
-             aria-hidden="true"
-             style="fill:white;stroke:none">
-          <path d="M12 3C6.5 3 2 6.6 2 11
+      <div class="app-icon message-icon">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path fill="white"
+                d="M12 3C6.5 3 2 6.6 2 11
                    c0 2.5 1.4 4.8 3.6 6.3L4.5 21
                    l4.4-2.2c1 .2 2 .3 3.1.3
                    5.5 0 10-3.6 10-8.1S17.5 3 12 3Z"/>
@@ -354,7 +420,7 @@ svg {
     </article>
 
     <article class="notification">
-      <div class="calendar-icon">♡</div>
+      <div class="app-icon calendar-icon">♡</div>
 
       <div class="content">
         <div class="heading">
@@ -391,15 +457,19 @@ svg {
 <script>
 function updateClock() {
   const now = new Date();
+  const hours = String(now.getHours());
+  const minutes = String(now.getMinutes()).padStart(2, "0");
 
-  const time = now.toLocaleTimeString("en-GB", {
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false
-  }).replace(/^0/, "");
+  document.getElementById("hours").textContent = hours;
+  document.getElementById("minutes").textContent = minutes;
 
-  document.getElementById("time").textContent = time;
-  document.getElementById("small-time").textContent = time;
+  document.getElementById("small-time").textContent =
+    hours + ":" + minutes;
+
+  document.getElementById("time").classList.toggle(
+    "long-time",
+    hours.length === 2
+  );
 
   document.getElementById("date").textContent =
     now.toLocaleDateString("ko-KR", {
@@ -410,6 +480,10 @@ function updateClock() {
 }
 
 updateClock();
+setInterval(updateClock, 1000);
+</script>
+</body>
+</html>
 setInterval(updateClock, 1000);
 </script>
 </body>
