@@ -6,12 +6,9 @@
 <title>나의 iPhone</title>
 
 <style>
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
-html,
-body {
+html, body {
   margin: 0;
   width: 100%;
   height: 100%;
@@ -24,17 +21,23 @@ body {
   overflow: hidden;
   background: #0d0e10;
   color: white;
-  font-family:
-    -apple-system,
-    BlinkMacSystemFont,
-    "SF Pro Display",
-    "Helvetica Neue",
-    Arial,
-    sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont,
+               "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
-/* 브라우저 높이에 맞춰지는 아이폰 화면 */
+button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:focus-visible {
+  outline: 2px solid white;
+  outline-offset: 4px;
+}
+
 .phone {
   position: relative;
   height: min(100dvh, 216.7939vw);
@@ -46,42 +49,35 @@ body {
   background: #25262a;
 }
 
-/* 배경 사진 */
-.wallpaper {
+.wallpaper, .shade {
   position: absolute;
   inset: 0;
+  pointer-events: none;
+}
+
+.wallpaper {
   z-index: -2;
   background: url("wallpaper.jpg") center / cover no-repeat;
 }
 
 .shade {
-  position: absolute;
-  inset: 0;
   z-index: -1;
-  background: linear-gradient(
-    180deg,
-    rgba(0, 0, 0, .24),
-    transparent 38%,
-    rgba(0, 0, 0, .08) 65%,
-    rgba(0, 0, 0, .3)
-  );
+  background: linear-gradient(#0004, #0000 40%, #0005);
 }
 
-svg {
-  display: block;
-}
+svg { display: block; }
 
-/* 상태 표시줄 */
+/* 모든 화면 위에 표시되는 상태 표시줄 */
 .status {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
+  inset: 0 0 auto;
+  z-index: 10;
   height: 15cqw;
   padding: 5.2cqw 7cqw 0;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
+  pointer-events: none;
 }
 
 .small-time {
@@ -108,173 +104,69 @@ svg {
   gap: 1.5cqw;
 }
 
-.signal {
-  width: 4.6cqw;
-  height: 3.4cqw;
+.signal { width: 4.6cqw; height: 3.4cqw; }
+.wifi { width: 4.5cqw; height: 3.5cqw; }
+.battery { width: 6.5cqw; height: 3.4cqw; }
+
+.screen {
+  position: absolute;
+  inset: 0;
 }
 
-.wifi {
-  width: 4.5cqw;
-  height: 3.5cqw;
+[hidden] { display: none !important; }
+
+/* 잠금 화면 */
+.lock-screen {
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
-.battery {
-  width: 6.5cqw;
-  height: 3.4cqw;
-}
-
-/* 날짜와 시계 */
 .clock {
   position: absolute;
   top: 27cqw;
-  left: 0;
   width: 100%;
   text-align: center;
 }
 
 .date {
   font-size: 5.5cqw;
-  line-height: 1.2;
   font-weight: 700;
+  line-height: 1.2;
   letter-spacing: -.2cqw;
 }
 
 .time {
-  display: flex;
-  justify-content: center;
-  align-items: baseline;
   margin-top: 1.2cqw;
-
-  font-family:
-    -apple-system,
-    BlinkMacSystemFont,
-    "SF Pro Display",
-    "Helvetica Neue",
-    Arial,
-    sans-serif;
-
   font-size: 30cqw;
-  line-height: 1;
   font-weight: 700;
-  font-variant-numeric: tabular-nums;
+  line-height: 1;
   letter-spacing: -1.8cqw;
+  font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
 
-.time .colon {
-  display: inline-block;
-  margin: 0 .2cqw 0 -.2cqw;
-  transform: translateY(-.6cqw);
-}
-
-/* 시계가 네 자리일 때 폭 조절 */
-.time.long-time {
-  font-size: 28cqw;
-}
+.time.long-time { font-size: 28cqw; }
 
 .language {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
   gap: 1.6cqw;
   margin-top: 5cqw;
   padding: 1.6cqw 3.4cqw;
   border-radius: 8cqw;
-  background: rgba(58, 57, 55, .85);
+  background: #3a3937d9;
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   font-size: 3.7cqw;
   font-weight: 600;
 }
 
-.language svg {
-  width: 4.3cqw;
-  height: 4.3cqw;
-}
+.language svg { width: 4.3cqw; height: 4.3cqw; }
 
-/* 알림 */
-.notifications {
-  position: absolute;
-  bottom: 38cqw;
-  left: 2.5cqw;
-  right: 2.5cqw;
-  display: grid;
-  gap: 1.6cqw;
-}
-
-.notification {
-  min-height: 17cqw;
-  display: flex;
-  align-items: center;
-  gap: 3.2cqw;
-  padding: 3.2cqw 3.7cqw;
-  border-radius: 8cqw;
-  background: rgba(65, 64, 73, .76);
-  backdrop-filter: blur(28px);
-  -webkit-backdrop-filter: blur(28px);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .08);
-}
-
-.app-icon {
-  flex-shrink: 0;
-  width: 10.2cqw;
-  height: 10.2cqw;
-  display: grid;
-  place-items: center;
-  overflow: hidden;
-  border-radius: 2.6cqw;
-}
-
-.message-icon {
-  background: #2acb54;
-}
-
-.message-icon svg {
-  width: 7cqw;
-  height: 7cqw;
-}
-
-.calendar-icon {
-  background: white;
-  color: #333;
-  font-size: 6cqw;
-}
-
-.content {
-  flex: 1;
-  min-width: 0;
-}
-
-.heading {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 2cqw;
-}
-
-.heading strong {
-  font-size: 3.8cqw;
-  font-weight: 700;
-  letter-spacing: -.12cqw;
-}
-
-.heading span {
-  flex-shrink: 0;
-  font-size: 3cqw;
-  color: #bdbcc3;
-}
-
-.content p {
-  margin: .4cqw 0 0;
-  font-size: 3.6cqw;
-  line-height: 1.25;
-  letter-spacing: -.1cqw;
-}
-
-/* 하단 버튼 */
 .controls {
   position: absolute;
-  bottom: 12cqw;
+  bottom: 14cqw;
   left: 12cqw;
   right: 12cqw;
   display: flex;
@@ -286,34 +178,32 @@ svg {
   height: 13cqw;
   display: grid;
   place-items: center;
-  padding: 0;
-  border: 0;
   border-radius: 50%;
-  color: white;
-  background: rgba(43, 43, 43, .8);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
+  background: #2b2b2bcc;
 }
 
 .round-button svg {
   width: 5.5cqw;
   height: 5.5cqw;
   fill: none;
-  stroke: currentColor;
+  stroke: white;
   stroke-width: 1.8;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
 
-.hint {
+.unlock-hint {
   position: absolute;
-  bottom: 8cqw;
-  left: 0;
-  width: 100%;
-  text-align: center;
-  font-size: 3.3cqw;
+  bottom: 7cqw;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 2cqw;
+  border: 0;
+  background: transparent;
+  white-space: nowrap;
+  font-size: 3.4cqw;
   font-weight: 500;
-  color: rgba(255, 255, 255, .68);
+  color: #ffffffc4;
 }
 
 .home-bar {
@@ -325,12 +215,191 @@ svg {
   height: 1.2cqw;
   border-radius: 2cqw;
   background: white;
+  pointer-events: none;
+}
+
+/* 비밀번호 화면 */
+.passcode-screen {
+  background: rgba(20, 22, 28, .58);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+}
+
+.passcode-content {
+  position: absolute;
+  top: 38cqw;
+  left: 0;
+  width: 100%;
+  text-align: center;
+}
+
+.lock-icon {
+  width: 6cqw;
+  height: 7cqw;
+  margin: 0 auto 6cqw;
+  fill: none;
+  stroke: white;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.passcode-title {
+  margin: 0;
+  font-size: 5.8cqw;
+  font-weight: 500;
+  outline: none;
+}
+
+.passcode-help {
+  margin: 2.2cqw 0 0;
+  font-size: 3.3cqw;
+  color: #ffffffce;
+}
+
+.dots {
+  display: flex;
+  justify-content: center;
+  gap: 6.6cqw;
+  margin-top: 7cqw;
+}
+
+.dot {
+  width: 3.2cqw;
+  height: 3.2cqw;
+  border: 1.5px solid white;
+  border-radius: 50%;
+}
+
+.dot.filled { background: white; }
+
+.passcode-feedback {
+  min-height: 4cqw;
+  margin: 3cqw 0 2cqw;
+  font-size: 3.2cqw;
+  color: white;
+}
+
+.keypad {
+  display: grid;
+  grid-template-columns: repeat(3, 19cqw);
+  justify-content: center;
+  gap: 5cqw 7cqw;
+}
+
+.key {
+  width: 19cqw;
+  height: 19cqw;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: #ffffff24;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.key:active { background: #ffffff60; }
+
+.number {
+  font-size: 9cqw;
+  font-weight: 300;
+  line-height: 1;
+}
+
+.letters {
+  height: 3cqw;
+  margin-top: 1cqw;
+  font-size: 2.4cqw;
+  font-weight: 600;
+  letter-spacing: .45cqw;
+  padding-left: .45cqw;
+}
+
+.key.zero {
+  grid-column: 2;
+}
+
+.key.zero .number {
+  transform: translateY(-.3cqw);
+}
+
+.passcode-actions {
+  display: flex;
+  justify-content: space-between;
+  margin: 7cqw auto 0;
+  width: 71cqw;
+}
+
+.text-button {
+  border: 0;
+  padding: 2cqw;
+  background: transparent;
+  font-size: 3.7cqw;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-3cqw); }
+  40%, 80% { transform: translateX(3cqw); }
+}
+
+.dots.shake { animation: shake .38s; }
+
+/* 잠금 해제 후 홈 화면 */
+.home-screen {
+  background: #00000012;
+}
+
+.home-title {
+  position: absolute;
+  top: 32cqw;
+  width: 100%;
+  text-align: center;
+  margin: 0;
+  font-size: 6cqw;
+  font-weight: 600;
+  outline: none;
+}
+
+.home-note {
+  position: absolute;
+  top: 43cqw;
+  width: 100%;
+  margin: 0;
+  text-align: center;
+  font-size: 3.6cqw;
+  color: #ffffffc9;
+}
+
+.dock {
+  position: absolute;
+  bottom: 8cqw;
+  left: 4cqw;
+  right: 4cqw;
+  min-height: 23cqw;
+  border-radius: 8cqw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff26;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.lock-again {
+  border: 0;
+  border-radius: 5cqw;
+  padding: 3cqw 6cqw;
+  background: #00000040;
+  font-size: 4cqw;
 }
 </style>
 </head>
 
 <body>
-<main class="phone" aria-label="아이폰 잠금 화면">
+<main class="phone" aria-label="아이폰">
   <div class="wallpaper"></div>
   <div class="shade"></div>
 
@@ -339,49 +408,30 @@ svg {
     <div class="island" aria-hidden="true"></div>
 
     <div class="indicators">
-     <!-- 통신 신호: 막대 4개 -->
-<svg class="signal" viewBox="0 0 20 16"
-     role="img" aria-label="통신 신호">
-  <g fill="white">
-    <rect x="0" y="10" width="3.3" height="6" rx=".8"/>
-    <rect x="5.3" y="7" width="3.3" height="9" rx=".8"/>
-    <rect x="10.6" y="3.5" width="3.3" height="12.5" rx=".8"/>
-    <rect x="15.9" y="0" width="3.3" height="16" rx=".8"/>
-  </g>
-</svg>
+      <svg class="signal" viewBox="0 0 20 16"
+           role="img" aria-label="통신 신호">
+        <g fill="white">
+          <rect x="0" y="10" width="3.3" height="6" rx=".8"/>
+          <rect x="5.3" y="7" width="3.3" height="9" rx=".8"/>
+          <rect x="10.6" y="3.5" width="3.3" height="12.5" rx=".8"/>
+          <rect x="15.9" y="0" width="3.3" height="16" rx=".8"/>
+        </g>
+      </svg>
 
-<!-- 와이파이: 부채꼴 곡선과 아래 점 -->
-<svg class="wifi" viewBox="0 0 24 18"
-     role="img" aria-label="와이파이">
-  <g fill="white">
-    <path d="
-      M1.2 4.5
-      Q12 -4 22.8 4.5
-      L20.4 7
-      Q12 .4 3.6 7
-      Z"/>
-    <path d="
-      M5.4 8.8
-      Q12 3.5 18.6 8.8
-      L16.2 11.3
-      Q12 8 7.8 11.3
-      Z"/>
-    <path d="
-      M9.1 12.7
-      Q12 10.4 14.9 12.7
-      L12.8 15
-      Q12 15.8 11.2 15
-      Z"/>
-  </g>
-</svg>
+      <svg class="wifi" viewBox="0 0 24 18"
+           role="img" aria-label="와이파이">
+        <g fill="white">
+          <path d="M1.2 4.5Q12 -4 22.8 4.5L20.4 7Q12 .4 3.6 7Z"/>
+          <path d="M5.4 8.8Q12 3.5 18.6 8.8L16.2 11.3Q12 8 7.8 11.3Z"/>
+          <path d="M9.1 12.7Q12 10.4 14.9 12.7L12.8 15Q12 15.8 11.2 15Z"/>
+        </g>
+      </svg>
 
-      <!-- 배터리 -->
       <svg class="battery" viewBox="0 0 30 15"
            role="img" aria-label="배터리">
         <rect x=".7" y=".7" width="25" height="13"
-              rx="3.5" fill="none"
-              stroke="white" stroke-opacity=".6"
-              stroke-width="1.2"/>
+              rx="3.5" fill="none" stroke="white"
+              stroke-opacity=".6" stroke-width="1.2"/>
         <rect x="2.7" y="2.7" width="21" height="9"
               rx="1.6" fill="white"/>
         <path d="M27 5v5c2.4 0 2.4-5 0-5Z"
@@ -390,98 +440,147 @@ svg {
     </div>
   </header>
 
-  <section class="clock" aria-label="날짜와 시간">
-    <div id="date" class="date"></div>
+  <!-- 1. 잠금 화면: 알림 메시지 없음 -->
+  <section id="lock-screen" class="screen lock-screen">
+    <div class="clock">
+      <div id="date" class="date"></div>
+      <div id="time" class="time"></div>
 
-    <div id="time" class="time">
-      <span id="hours"></span>
-      <span class="colon">:</span>
-      <span id="minutes"></span>
+      <div class="language">
+        <svg viewBox="0 0 24 24" fill="none"
+             stroke="white" stroke-width="1.5" aria-hidden="true">
+          <circle cx="12" cy="12" r="9"/>
+          <ellipse cx="12" cy="12" rx="4" ry="9"/>
+          <path d="M3 12h18 M5 6.5h14 M5 17.5h14"/>
+        </svg>
+        한국어
+      </div>
     </div>
 
-    <div class="language">
-      <svg viewBox="0 0 24 24" fill="none"
-           stroke="white" stroke-width="1.5"
-           aria-hidden="true">
-        <circle cx="12" cy="12" r="9"/>
-        <ellipse cx="12" cy="12" rx="4" ry="9"/>
-        <path d="M3 12h18 M5 6.5h14 M5 17.5h14"/>
-      </svg>
-      한국어
-    </div>
-  </section>
-
-  <section class="notifications" aria-label="알림">
-    <article class="notification">
-      <div class="app-icon message-icon">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path fill="white"
-                d="M12 3C6.5 3 2 6.6 2 11
-                   c0 2.5 1.4 4.8 3.6 6.3L4.5 21
-                   l4.4-2.2c1 .2 2 .3 3.1.3
-                   5.5 0 10-3.6 10-8.1S17.5 3 12 3Z"/>
+    <div class="controls" aria-hidden="true">
+      <div class="round-button">
+        <svg viewBox="0 0 24 24">
+          <path d="M8 2h8v5l-2 3v11h-4V10L8 7Z M8 6h8 M12 12v4"/>
         </svg>
       </div>
-
-      <div class="content">
-        <div class="heading">
-          <strong>재현이 형</strong>
-          <span>지금</span>
-        </div>
-        <p>동현아 전화해</p>
+      <div class="round-button">
+        <svg viewBox="0 0 24 24">
+          <path d="M3 7h5l2-3h4l2 3h5v13H3Z"/>
+          <circle cx="12" cy="13" r="4"/>
+        </svg>
       </div>
-    </article>
+    </div>
 
-    <article class="notification">
-      <div class="app-icon calendar-icon">♡</div>
-
-      <div class="content">
-        <div class="heading">
-          <strong>한동민 생일 D+71</strong>
-          <span>지금</span>
-        </div>
-        <p>8월 10일</p>
-      </div>
-    </article>
+    <button id="unlock-hint" class="unlock-hint" type="button">
+      위로 쓸어올려 열기
+    </button>
+    <div class="home-bar"></div>
   </section>
 
-  <div class="controls">
-    <button class="round-button" type="button"
-            aria-label="손전등 모양">
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M8 2h8v5l-2 3v11h-4V10L8 7Z
-                 M8 6h8 M12 12v4"/>
+  <!-- 2. 네 자리 비밀번호 화면 -->
+  <section id="passcode-screen" class="screen passcode-screen"
+           aria-labelledby="passcode-title" hidden>
+    <div class="passcode-content">
+      <svg class="lock-icon" viewBox="0 0 24 28" aria-hidden="true">
+        <path d="M6 12V8a6 6 0 0 1 12 0v4"/>
+        <rect x="3" y="12" width="18" height="14" rx="3"/>
       </svg>
-    </button>
 
-    <button class="round-button" type="button"
-            aria-label="카메라 모양">
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M3 7h5l2-3h4l2 3h5v13H3Z"/>
-        <circle cx="12" cy="13" r="4"/>
-      </svg>
-    </button>
-  </div>
+      <h1 id="passcode-title" class="passcode-title" tabindex="-1">
+        암호 입력
+      </h1>
+      <p class="passcode-help">4자리 암호를 입력하십시오</p>
 
-  <div class="hint">위로 쓸어올려 열기</div>
-  <div class="home-bar" aria-hidden="true"></div>
+      <div id="dots" class="dots" aria-hidden="true">
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+      </div>
+
+      <p id="passcode-feedback" class="passcode-feedback"
+         role="status" aria-live="polite"></p>
+
+      <div class="keypad" aria-label="비밀번호 숫자 키패드">
+        <button class="key" data-digit="1" aria-label="1">
+          <span class="number">1</span><span class="letters"></span>
+        </button>
+        <button class="key" data-digit="2" aria-label="2">
+          <span class="number">2</span><span class="letters">ABC</span>
+        </button>
+        <button class="key" data-digit="3" aria-label="3">
+          <span class="number">3</span><span class="letters">DEF</span>
+        </button>
+        <button class="key" data-digit="4" aria-label="4">
+          <span class="number">4</span><span class="letters">GHI</span>
+        </button>
+        <button class="key" data-digit="5" aria-label="5">
+          <span class="number">5</span><span class="letters">JKL</span>
+        </button>
+        <button class="key" data-digit="6" aria-label="6">
+          <span class="number">6</span><span class="letters">MNO</span>
+        </button>
+        <button class="key" data-digit="7" aria-label="7">
+          <span class="number">7</span><span class="letters">PQRS</span>
+        </button>
+        <button class="key" data-digit="8" aria-label="8">
+          <span class="number">8</span><span class="letters">TUV</span>
+        </button>
+        <button class="key" data-digit="9" aria-label="9">
+          <span class="number">9</span><span class="letters">WXYZ</span>
+        </button>
+        <button class="key zero" data-digit="0" aria-label="0">
+          <span class="number">0</span>
+        </button>
+      </div>
+
+      <div class="passcode-actions">
+        <button id="cancel" class="text-button" type="button">취소</button>
+        <button id="delete" class="text-button" type="button">지우기</button>
+      </div>
+    </div>
+
+    <div class="home-bar"></div>
+  </section>
+
+  <!-- 3. 올바른 암호를 입력한 뒤 보이는 홈 화면 -->
+  <section id="home-screen" class="screen home-screen" hidden>
+    <h1 id="home-title" class="home-title" tabindex="-1">홈 화면</h1>
+    <p class="home-note">여기에 앱을 하나씩 추가할 거야</p>
+
+    <div class="dock">
+      <button id="lock-again" class="lock-again" type="button">
+        다시 잠그기
+      </button>
+    </div>
+
+    <div class="home-bar"></div>
+  </section>
 </main>
 
 <script>
+const lockScreen = document.getElementById("lock-screen");
+const passcodeScreen = document.getElementById("passcode-screen");
+const homeScreen = document.getElementById("home-screen");
+const dotsContainer = document.getElementById("dots");
+const dots = [...document.querySelectorAll(".dot")];
+const feedback = document.getElementById("passcode-feedback");
+
+let currentScreen = "lock";
+let enteredCode = "";
+let checking = false;
+let resetTimer;
+
 function updateClock() {
   const now = new Date();
   const hours = String(now.getHours());
   const minutes = String(now.getMinutes()).padStart(2, "0");
+  const time = hours + ":" + minutes;
 
-  document.getElementById("hours").textContent = hours;
-  document.getElementById("minutes").textContent = minutes;
-
-  document.getElementById("small-time").textContent =
-    hours + ":" + minutes;
-
+  document.getElementById("small-time").textContent = time;
+  document.getElementById("time").textContent = time;
   document.getElementById("time").classList.toggle(
-    "long-time",
-    hours.length === 2
+    "long-time", hours.length === 2
   );
 
   document.getElementById("date").textContent =
@@ -492,11 +591,129 @@ function updateClock() {
     });
 }
 
+function updateDots() {
+  dots.forEach((dot, index) => {
+    dot.classList.toggle("filled", index < enteredCode.length);
+  });
+}
+
+function resetCode() {
+  clearTimeout(resetTimer);
+  enteredCode = "";
+  checking = false;
+  feedback.textContent = "";
+  dotsContainer.classList.remove("shake");
+  updateDots();
+}
+
+function showScreen(name) {
+  currentScreen = name;
+  lockScreen.hidden = name !== "lock";
+  passcodeScreen.hidden = name !== "passcode";
+  homeScreen.hidden = name !== "home";
+}
+
+function openPasscode() {
+  if (currentScreen !== "lock") return;
+  resetCode();
+  showScreen("passcode");
+  document.getElementById("passcode-title").focus();
+}
+
+function enterDigit(digit) {
+  if (currentScreen !== "passcode" || checking) return;
+  if (enteredCode.length >= 4) return;
+
+  feedback.textContent = "";
+  enteredCode += digit;
+  updateDots();
+
+  if (enteredCode.length === 4) {
+    checking = true;
+
+    if (enteredCode === "1020") {
+      resetTimer = setTimeout(() => {
+        resetCode();
+        showScreen("home");
+        document.getElementById("home-title").focus();
+      }, 180);
+    } else {
+      dotsContainer.classList.add("shake");
+      feedback.textContent = "암호가 올바르지 않습니다";
+      resetTimer = setTimeout(resetCode, 650);
+    }
+  }
+}
+
+/* 사용자가 숫자 버튼을 직접 눌러 입력 */
+document.querySelectorAll("[data-digit]").forEach(button => {
+  button.addEventListener("click", () => {
+    enterDigit(button.dataset.digit);
+  });
+});
+
+document.getElementById("delete").addEventListener("click", () => {
+  if (checking) return;
+  enteredCode = enteredCode.slice(0, -1);
+  feedback.textContent = "";
+  updateDots();
+});
+
+document.getElementById("cancel").addEventListener("click", () => {
+  resetCode();
+  showScreen("lock");
+  document.getElementById("unlock-hint").focus();
+});
+
+document.getElementById("lock-again").addEventListener("click", () => {
+  resetCode();
+  showScreen("lock");
+  document.getElementById("unlock-hint").focus();
+});
+
+/* 터치 또는 마우스로 위로 밀기 */
+let gesture = null;
+
+lockScreen.addEventListener("pointerdown", event => {
+  if (!event.isPrimary || event.button !== 0) return;
+
+  gesture = {
+    id: event.pointerId,
+    x: event.clientX,
+    y: event.clientY
+  };
+
+  lockScreen.setPointerCapture(event.pointerId);
+});
+
+lockScreen.addEventListener("pointerup", event => {
+  if (!gesture || gesture.id !== event.pointerId) return;
+
+  const up = gesture.y - event.clientY;
+  const sideways = Math.abs(gesture.x - event.clientX);
+  const threshold = lockScreen.clientHeight * 0.07;
+
+  gesture = null;
+
+  if (up > threshold && up > sideways) {
+    openPasscode();
+  }
+});
+
+lockScreen.addEventListener("pointercancel", () => {
+  gesture = null;
+});
+
+lockScreen.addEventListener("lostpointercapture", () => {
+  gesture = null;
+});
+
+/* 키보드 접근성을 위한 동일한 진입 버튼 */
+document.getElementById("unlock-hint").addEventListener(
+  "click", openPasscode
+);
+
 updateClock();
-setInterval(updateClock, 1000);
-</script>
-</body>
-</html>
 setInterval(updateClock, 1000);
 </script>
 </body>
