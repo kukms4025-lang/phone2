@@ -6,7 +6,21 @@
 <title>나의 iPhone</title>
 
 <style>
-* { box-sizing: border-box; }
+/* 위로 밀 때 잠금 화면이 앞에서 움직임 */
+.lock-screen {
+  z-index: 2;
+  will-change: transform, opacity;
+}
+
+.passcode-screen {
+  z-index: 1;
+  will-change: transform, opacity;
+}
+
+.home-screen {
+  z-index: 3;
+}
+  * { box-sizing: border-box; }
 
 html, body {
   margin: 0;
@@ -624,39 +638,185 @@ document.getElementById("lock-again").addEventListener("click", () => {
   document.getElementById("unlock-hint").focus();
 });
 
+/* 손을 따라 움직이는 잠금 해제 애니메이션 */
+let animating = false;
+let lastY = 0;
+let lastTime = 0;
+let velocity = 0;
+let dragging = false;
+
+function prepareSwipe() {
+  passcodeScreen.hidden = false;
+  passcodeScreen.inert = true;
+  passcodeScreen.style.opacity = "0";
+  passcodeScreen.style.transform = "translateY(35px)";
+  passcodeScreen.style.pointerEvents = "none";
+}
+
+function paintSwipe(distance) {
+  const height = lockScreen.clientHeight;
+  const progress = Math.min(distance / (height * .5), 1);
+
+  lockScreen.style.transform = `translateY(${-distance}px)`;
+  lockScreen.style.opacity = String(1 - progress);
+
+  passcodeScreen.style.opacity = String(progress);
+  passcodeScreen.style.transform =
+    `translateY(${35 * (1 - progress)}px)`;
+}
+
+function clearSwipeStyles() {
+  [lockScreen, passcodeScreen].forEach(element => {
+    element.style.transition = "";
+    element.style.transform = "";
+    element.style.opacity = "";
+    element.style.pointerEvents = "";
+  });
+
+  passcodeScreen.inert = false;
+}
+
+function finishSwipe(open) {
+  if (animating) return;
+  animating = true;
+  gesture = null;
+
+  const reduceMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)"
+  ).matches;
+
+  const duration = reduceMotion ? 0 : 360;
+  const transition =
+    `${duration}ms cubic-bezier(.22, 1, .36, 1)`;
+
+  lockScreen.style.transition =
+    `transform ${transition}, opacity ${transition}`;
+
+  passcodeScreen.style.transition =
+    `transform ${transition}, opacity ${transition}`;
+
+  /* 현재 드래그 위치를 확정한 뒤 마지막 위치로 이동 */
+  void lockScreen.offsetHeight;
+
+  if (open) {
+    lockScreen.style.transform =
+      `translateY(${-lockScreen.clientHeight * .65}px)`;
+    lockScreen.style.opacity = "0";
+
+    passcodeScreen.style.transform = "translateY(0)";
+    passcodeScreen.style.opacity = "1";
+  } else {
+    lockScreen.style.transform = "translateY(0)";
+    lockScreen.style.opacity = "1";
+
+    passcodeScreen.style.transform = "translateY(35px)";
+    passcodeScreen.style.opacity = "0";
+  }
+
+  setTimeout(() => {
+    if (open) {
+      resetCode();
+      showScreen("passcode");
+    } else {
+      showScreen("lock");
+    }
+
+    clearSwipeStyles();
+    animating = false;
+    dragging = false;
+
+    if (open) {
+      document.getElementById("passcode-title").focus();
+    }
+  }, duration);
+}
+
 lockScreen.addEventListener("pointerdown", event => {
+  if (screen !== "lock" || animating) return;
   if (!event.isPrimary || event.button !== 0) return;
+
   gesture = {
     id: event.pointerId,
     x: event.clientX,
     y: event.clientY
   };
+
+  lastY = event.clientY;
+  lastTime = performance.now();
+  velocity = 0;
+  dragging = false;
+
   lockScreen.setPointerCapture(event.pointerId);
+});
+
+lockScreen.addEventListener("pointermove", event => {
+  if (!gesture || gesture.id !== event.pointerId) return;
+
+  const up = gesture.y - event.clientY;
+  const sideways = Math.abs(gesture.x - event.clientX);
+
+  if (!dragging) {
+    if (up < 5 || up < sideways) return;
+
+    dragging = true;
+    prepareSwipe();
+  }
+
+  const now = performance.now();
+  velocity = (lastY - event.clientY) /
+    Math.max(now - lastTime, 1);
+
+  lastY = event.clientY;
+  lastTime = now;
+
+  paintSwipe(Math.max(0, up));
 });
 
 lockScreen.addEventListener("pointerup", event => {
   if (!gesture || gesture.id !== event.pointerId) return;
 
-  const up = gesture.y - event.clientY;
-  const sideways = Math.abs(gesture.x - event.clientX);
+  const up = Math.max(0, gesture.y - event.clientY);
+  const moved = dragging;
   gesture = null;
 
-  if (up > lockScreen.clientHeight * .07 && up > sideways) {
-    openPasscode();
+  if (!moved) {
+    dragging = false;
+    return;
   }
+
+  /* 오래 멈췄다가 놓으면 이전 속도를 사용하지 않음 */
+  if (performance.now() - lastTime > 100) {
+    velocity = 0;
+  }
+
+  const enoughDistance = up > lockScreen.clientHeight * .18;
+  const quickSwipe = up > 25 && velocity > .45;
+
+  finishSwipe(enoughDistance || quickSwipe);
 });
 
 lockScreen.addEventListener("pointercancel", () => {
+  if (dragging && !animating) {
+    finishSwipe(false);
+  }
   gesture = null;
 });
 
 lockScreen.addEventListener("lostpointercapture", () => {
+  if (gesture && dragging && !animating) {
+    finishSwipe(false);
+  }
   gesture = null;
 });
 
+/* 안내 문구를 눌러도 같은 모션으로 열기 */
 document.getElementById("unlock-hint")
-  .addEventListener("click", openPasscode);
+  .addEventListener("click", () => {
+    if (screen !== "lock" || animating || dragging) return;
 
+    prepareSwipe();
+    finishSwipe(true);
+  });
 updateClock();
 updateInput();
 setInterval(updateClock, 1000);
