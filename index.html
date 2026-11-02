@@ -339,28 +339,41 @@ svg {
     <div class="island" aria-hidden="true"></div>
 
     <div class="indicators">
-      <!-- 통신 신호: 막대 4개 -->
-      <svg class="signal" viewBox="0 0 20 16"
-           role="img" aria-label="통신 신호">
-        <g fill="white">
-          <rect x="0" y="11" width="3.2" height="5" rx=".7"/>
-          <rect x="5.2" y="8" width="3.2" height="8" rx=".7"/>
-          <rect x="10.4" y="4" width="3.2" height="12" rx=".7"/>
-          <rect x="15.6" y="0" width="3.2" height="16" rx=".7"/>
-        </g>
-      </svg>
+     <!-- 통신 신호: 막대 4개 -->
+<svg class="signal" viewBox="0 0 20 16"
+     role="img" aria-label="통신 신호">
+  <g fill="white">
+    <rect x="0" y="10" width="3.3" height="6" rx=".8"/>
+    <rect x="5.3" y="7" width="3.3" height="9" rx=".8"/>
+    <rect x="10.6" y="3.5" width="3.3" height="12.5" rx=".8"/>
+    <rect x="15.9" y="0" width="3.3" height="16" rx=".8"/>
+  </g>
+</svg>
 
-      <!-- 와이파이: 곡선 3개와 점 1개 -->
-      <svg class="wifi" viewBox="0 0 24 20"
-           role="img" aria-label="와이파이">
-        <g fill="none" stroke="white" stroke-width="2.3"
-           stroke-linecap="round">
-          <path d="M2 5.3 C7.5 .9 16.5 .9 22 5.3"/>
-          <path d="M5.4 9.1 C9.1 6.1 14.9 6.1 18.6 9.1"/>
-          <path d="M8.9 12.9 C10.7 11.5 13.3 11.5 15.1 12.9"/>
-        </g>
-        <circle cx="12" cy="17" r="1.6" fill="white"/>
-      </svg>
+<!-- 와이파이: 부채꼴 곡선과 아래 점 -->
+<svg class="wifi" viewBox="0 0 24 18"
+     role="img" aria-label="와이파이">
+  <g fill="white">
+    <path d="
+      M1.2 4.5
+      Q12 -4 22.8 4.5
+      L20.4 7
+      Q12 .4 3.6 7
+      Z"/>
+    <path d="
+      M5.4 8.8
+      Q12 3.5 18.6 8.8
+      L16.2 11.3
+      Q12 8 7.8 11.3
+      Z"/>
+    <path d="
+      M9.1 12.7
+      Q12 10.4 14.9 12.7
+      L12.8 15
+      Q12 15.8 11.2 15
+      Z"/>
+  </g>
+</svg>
 
       <!-- 배터리 -->
       <svg class="battery" viewBox="0 0 30 15"
